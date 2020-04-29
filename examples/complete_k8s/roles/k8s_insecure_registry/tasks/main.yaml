@@ -1,0 +1,17 @@
+---
+- name: load daemon.json
+  slurp:
+    src: /etc/docker/daemon.json
+  become: yes
+  register: imported_var
+    
+- name: append insecure registries
+  set_fact:
+    imported_var: "{{ imported_var.content|b64decode|from_json | default([]) | combine({ 'insecure-registries': insecure_registries }) }}"
+- name: write new daemon.json
+  become: yes
+  copy: 
+    content: "{{ imported_var | to_nice_json }}" 
+    dest: /etc/docker/daemon.json
+  notify:
+    - Restart docker

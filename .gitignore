@@ -1,0 +1,7 @@
+**/*.pub
+**/*.log
+**/*.sh
+**/*inventory*.yaml
+**/pkg
+**/tests/output
+**/*.DS_Store

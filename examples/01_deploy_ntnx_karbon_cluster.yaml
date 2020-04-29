@@ -1,0 +1,22 @@
+---
+- hosts: localhost
+  collections:
+    - yst.ntnx
+  tasks:
+    - name: Nutanix Karbon cluster creation
+      ntnx_karbon_cluster:
+        name: "{{ cluster_name }}"
+        state: present
+        pc_host: "{{ pc_host }}"
+        pc_username: "{{ pc_username }}"
+        pc_password: "{{ pc_password }}"
+        ssl_verify: False
+        nutanix_cluster_username: "{{ pe_username }}"
+        nutanix_cluster_password: "{{ pe_password }}"
+        nutanix_cluster: "{{ nutanix_cluster }}"
+        nutanix_network: "{{ nutanix_network }}"
+        nutanix_storage_container: "{{ nutanix_storage_container }}"
+        karbon_image: "{{ karbon_image }}"
+        karbon_version: "{{ karbon_version }}"
+        worker_count: 2
+      register: karbon_cluster_output

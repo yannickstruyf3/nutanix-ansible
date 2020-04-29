@@ -1,0 +1,6 @@
+- name: Deploy K8s UI
+  k8s:
+    state: present
+    validate_certs: no
+    kubeconfig: "{{ kubeconfig_path }}"
+    src: "{{role_path}}/files/deploy_ui.yaml"

@@ -1,0 +1,9 @@
+plugins/modules/ntnx_bucket.py import-3.7
+plugins/module_utils/ntnx_karbon_utils.py import-3.7
+plugins/module_utils/ntnx_utils.py import-3.7
+plugins/modules/ntnx_cluster_dns.py import-3.7
+plugins/modules/ntnx_cluster_ntp.py import-3.7
+plugins/modules/ntnx_cluster_smtp.py import-3.7
+plugins/modules/ntnx_karbon_cluster.py import-3.7
+plugins/modules/ntnx_karbon_kubeconfig.py import-3.7
+plugins/modules/ntnx_karbon_ssh_certificates.py import-3.7

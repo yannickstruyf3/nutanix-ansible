@@ -1,0 +1,14 @@
+---
+- hosts: localhost
+  collections:
+    - yst.ntnx
+  tasks:
+    - name: Karbon DELETE kubeconfig
+      ntnx_karbon_kubeconfig:
+        name: "{{ cluster_name }}"
+        state: absent
+        pc_host: "{{ pc_host }}"
+        pc_username: "{{ pc_username }}"
+        pc_password: "{{ pc_password }}"
+        kubeconfig_download_path: "./{{ cluster_name }}-kubeconfig"
+        ssl_verify: False

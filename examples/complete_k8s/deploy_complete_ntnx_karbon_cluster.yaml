@@ -1,0 +1,94 @@
+---
+- hosts: localhost
+  collections:
+    - yst.ntnx
+  pre_tasks:
+    - name: Deploy Nutanix Karbon cluster
+      block:
+        - name: Nutanix Karbon cluster creation
+          ntnx_karbon_cluster:
+            name: "{{ cluster_name }}"
+            state: present
+            pc_host: "{{ pc_host }}"
+            pc_username: "{{ pc_username }}"
+            pc_password: "{{ pc_password }}"
+            ssl_verify: False
+            nutanix_cluster_username: "{{ pe_username }}"
+            nutanix_cluster_password: "{{ pe_password }}"
+            nutanix_cluster: "{{ nutanix_cluster }}"
+            nutanix_network: "{{ nutanix_network }}"
+            nutanix_storage_container: "{{ nutanix_storage_container }}"
+            karbon_image: "{{ karbon_image }}"
+            karbon_version: "{{ karbon_version }}"
+            worker_count: 2
+          register: karbon_cluster_output
+        - name: Karbon GET kubeconfig
+          ntnx_karbon_kubeconfig:
+            name: "{{ cluster_name }}"
+            state: present
+            pc_host: "{{ pc_host }}"
+            pc_username: "{{ pc_username }}"
+            pc_password: "{{ pc_password }}"
+            ssl_verify: False
+          register: karbon_kubeconfig_output
+        - name: Karbon GET SSH Certificates
+          ntnx_karbon_ssh_certificates:
+            name: "{{ cluster_name }}"
+            state: present
+            pc_host: "{{ pc_host }}"
+            pc_username: "{{ pc_username }}"
+            pc_password: "{{ pc_password }}"
+            ssl_verify: False
+          register: karbon_ssh_output
+        - name: Setting kubeconfig, worker IPs and private key path
+          set_fact:
+            kubeconfig_path: "{{karbon_kubeconfig_output.kubeconfig_path}}"
+            worker_ips: "{{karbon_cluster_output.worker_ips}}"
+            ssh_private_key_path: "{{ karbon_ssh_output.ssh_private_key_path }}"
+  roles:
+    - role: karbon_add_worker_nodes
+
+- hosts: workers
+  serial: 1
+  roles:
+    - role: k8s_insecure_registry
+
+- hosts: localhost
+  collections:
+    - yst.ntnx
+  roles:
+    - role: k8s_prereq
+    - role: k8s_ui
+    - role: k8s_metallb
+    - role: k8s_nginx_ingress
+    - role: k8s_test_app
+      when: deploy_test_app
+  post_tasks:
+    - name: Cleanup local artifacts
+      block:
+        - name: Karbon DELETE kubeconfig
+          ntnx_karbon_kubeconfig:
+            name: "{{ cluster_name }}"
+            state: absent
+            pc_host: "{{ pc_host }}"
+            pc_username: "{{ pc_username }}"
+            pc_password: "{{ pc_password }}"
+            ssl_verify: False
+        - name: Karbon DELETE SSH Certificates
+          ntnx_karbon_ssh_certificates:
+            name: "{{ cluster_name }}"
+            state: absent
+            pc_host: "{{ pc_host }}"
+            pc_username: "{{ pc_username }}"
+            pc_password: "{{ pc_password }}"
+            ssl_verify: False
+    - name: Worker nodes
+      debug:
+        msg: "{{ worker_ips }}"
+    - name: Kubeconfig export command
+      debug:
+        msg: "{{ karbon_kubeconfig_output.msg }}"
+    - name: Test if Karbon is working
+      when: deploy_test_app
+      debug:
+        msg: "Go to http://{{ k8s_testapp_ingress }}"

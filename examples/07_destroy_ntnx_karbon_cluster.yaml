@@ -1,0 +1,13 @@
+---
+- hosts: localhost
+  collections:
+    - yst.ntnx
+  tasks:
+    - name: Nutanix Karbon deletion
+      ntnx_karbon_cluster:
+        name: "{{ cluster_name }}"
+        state: absent
+        pc_host: "{{ pc_host }}"
+        pc_username: "{{ pc_username }}"
+        pc_password: "{{ pc_password }}"
+        ssl_verify: False

@@ -1,0 +1,7 @@
+- name: Installing pip dependencies
+  pip:
+    name: [
+      "openshift",
+      "pyyaml"
+    ]
+    state: present

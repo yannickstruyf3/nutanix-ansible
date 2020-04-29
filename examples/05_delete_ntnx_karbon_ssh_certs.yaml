@@ -1,0 +1,14 @@
+---
+- hosts: localhost
+  collections:
+    - yst.ntnx
+  tasks:
+    - name: Karbon DELETE SSH Certificates
+      ntnx_karbon_ssh_certificates:
+        name: "{{ cluster_name }}"
+        state: absent
+        pc_host: "{{ pc_host }}"
+        pc_username: "{{ pc_username }}"
+        pc_password: "{{ pc_password }}"
+        ssh_certificates_download_path: "./KARBON-{{ cluster_name }}"
+        ssl_verify: False

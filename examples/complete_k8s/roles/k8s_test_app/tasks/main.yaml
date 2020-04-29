@@ -1,0 +1,86 @@
+- name: Deploy K8s test app namespace
+  k8s:
+    state: present
+    validate_certs: no
+    kubeconfig: "{{ kubeconfig_path }}"
+    definition:
+        apiVersion: v1
+        kind: Namespace
+        metadata:
+          labels:
+            app: test-app
+          name: test-app
+
+- name: Deploy K8s Apache service
+  k8s:
+    state: present
+    validate_certs: no
+    kubeconfig: "{{ kubeconfig_path }}"
+    definition:
+        apiVersion: v1
+        kind: Service
+        metadata:
+          namespace: test-app
+          name: my-apache
+          labels:
+            run: my-apache
+        spec:
+          type: NodePort
+          ports:
+          - port: 8080
+            targetPort: 80
+            protocol: TCP
+            name: http
+          - port: 443
+            protocol: TCP
+            name: https
+          selector:
+            run: my-apache
+- name: Deploy K8s Apache deployment
+  k8s:
+    state: present
+    validate_certs: no
+    kubeconfig: "{{ kubeconfig_path }}"
+    definition:
+        apiVersion: apps/v1
+        kind: Deployment
+        metadata:
+          namespace: test-app
+          name: my-apache
+        spec:
+          selector:
+            matchLabels:
+              run: my-apache
+          replicas: 1
+          template:
+            metadata:
+              labels:
+                run: my-apache
+            spec:
+              containers:
+              - name: apachehttps
+                image: httpd:latest
+                ports:
+                - containerPort: 443
+                - containerPort: 80
+        
+- name: Deploy K8s Apache ingress
+  k8s:
+    state: present
+    validate_certs: no
+    kubeconfig: "{{ kubeconfig_path }}"
+    definition:
+        apiVersion: networking.k8s.io/v1beta1
+        kind: Ingress
+        metadata:
+            namespace: test-app
+            name: test-app-ingress
+        spec:
+            rules:
+            - host: "{{ k8s_testapp_ingress }}"
+              http:
+                paths:
+                - backend:
+                    serviceName: my-apache
+                    servicePort: 8080
+        

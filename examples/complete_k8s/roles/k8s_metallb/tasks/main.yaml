@@ -1,0 +1,36 @@
+- name: Create K8s MetalLB namespace
+  k8s:
+    state: present
+    validate_certs: no
+    kubeconfig: "{{ kubeconfig_path }}"
+    definition:
+      apiVersion: v1
+      kind: Namespace
+      metadata:
+        labels:
+          app: metallb
+        name: metallb-system
+- name: Create K8s MetalLB configuration
+  k8s:
+    state: present
+    validate_certs: no
+    kubeconfig: "{{ kubeconfig_path }}"
+    definition:
+      apiVersion: v1
+      kind: ConfigMap
+      metadata:
+        namespace: metallb-system
+        name: config
+      data:
+        config: |
+          address-pools:
+          - name: default
+            protocol: layer2
+            addresses:
+            - {{ metallb_start_ip }}-{{ metallb_end_ip }}
+- name: Deploy K8s MetalLB
+  k8s:
+    state: present
+    validate_certs: no
+    kubeconfig: "{{ kubeconfig_path }}"
+    src: "{{role_path}}/files/deploy_metallb.yaml"

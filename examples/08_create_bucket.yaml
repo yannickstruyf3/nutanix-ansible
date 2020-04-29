@@ -1,0 +1,16 @@
+---
+- hosts: localhost
+  collections:
+    - yst.ntnx
+  vars:
+  tasks:
+    - name: "bucket CREATE"
+      ntnx_bucket:
+        name: "{{ bucket }}"
+        object_store: "{{ object_store }}"
+        state: present
+        pc_host: "{{ pc_host }}"
+        pc_username: "{{ pc_username }}"
+        pc_password: "{{ pc_password }}"
+        ssl_verify: False
+        bucket_permissions: "{{bucket_permissions}}"

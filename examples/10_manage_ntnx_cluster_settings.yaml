@@ -1,0 +1,32 @@
+---
+- hosts: localhost
+  collections:
+    - yst.ntnx
+  tasks:
+    - name: "Setting DNS for clusters"
+      ntnx_cluster_dns:
+        pe_host: "{{ pe_host }}"
+        pe_username: "{{ pe_username }}"
+        pe_password: "{{ pe_password }}"
+        ssl_verify: False
+        dns_servers: "{{ dns_servers }}"
+    - name: "Setting NTP for clusters"
+      ntnx_cluster_ntp:
+        pe_host: "{{ pe_host }}"
+        pe_username: "{{ pe_username }}"
+        pe_password: "{{ pe_password }}"
+        ssl_verify: False
+        ntp_servers: "{{ ntp_servers }}"
+    - name: "Setting SMTP for clusters"
+      ntnx_cluster_smtp:
+        state: present
+        pe_host: "{{ pe_host }}"
+        pe_username: "{{ pe_username }}"
+        pe_password: "{{ pe_password }}"
+        ssl_verify: False
+        smtp_address: "{{ smtp_address }}"
+        smtp_port: "{{ smtp_port }}"
+        smtp_username: "{{ smtp_username }}"
+        smtp_password: "{{ smtp_password }}"
+        smtp_secure_mode: "{{ smtp_secure_mode }}"
+        smtp_from_email_address: "{{ smtp_from_email_address }}"

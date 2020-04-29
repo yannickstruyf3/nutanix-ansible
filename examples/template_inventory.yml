@@ -1,0 +1,66 @@
+---
+workers:
+    hosts:
+    vars:
+        insecure_registries:
+            - my-insecure-registry.domain.local
+all:
+    hosts:
+        localhost:
+    vars:
+        ##
+        # Generic vars
+        ##
+        pc_host: 10.10.13.37
+        pc_username: admin
+        pc_password: my_password
+        pe_host: 10.10.13.36
+        pe_username: admin
+        pe_password: my_other_password
+        nutanix_storage_container: "my-storage-container"
+        nutanix_network: "my-network"
+        nutanix_cluster: "my-target-cluster"
+        ##
+        # Karbon vars
+        ##
+        k8s_testapp_ingress: my-fancy-ingress.domain.local
+        cluster_name: k8s-ansible-created
+        metallb_start_ip: 10.10.13.100
+        metallb_end_ip: 10.10.13.150
+        karbon_version: "1.14.10-0"
+        karbon_image: "karbon-ntnx-0.2"
+        deploy_test_app: false
+
+        ##
+        # SMTP vars
+        ##
+        smtp_address: "my-smpt.domain.local"
+        smtp_port: "25"
+        smtp_secure_mode: "STARTTLS"
+        smtp_from_email_address: "no-reply@domain.local"
+        smtp_username: "user@domain.local"
+        smtp_password: my-smpt-password
+        ##
+        # DNS vars
+        ##
+        dns_servers:
+            - "8.8.8.8"
+        ##
+        # NTP vars
+        ##
+        ntp_servers:
+            - 0.be.pool.ntp.org
+            - 1.be.pool.ntp.org
+            - 2.be.pool.ntp.org
+        ##
+        # Bucket vars
+        ##
+        object_store: my-objectstore
+        bucket: ansible-created
+        bucket_username: bucket-user@domain.local
+        bucket_permissions:
+            - username: user@domain.local
+              regenerate_key: yes
+              permissions:
+                  - read
+                  - write
